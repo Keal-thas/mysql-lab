@@ -25,12 +25,16 @@
 ./client.sh < beginner/01-order-by-tie-order/demo.sql
 ```
 
-有些 demo（比如死锁）需要开两个独立的 client 会话，对应 README 会写清楚。
+有些 demo（比如死锁、间隙锁）需要开两个甚至三个独立的 client 会话，对应 README
+会写清楚。
+
+想快速扫一眼有哪些坑、每个坑一句话是什么，看 [`PITFALLS.md`](PITFALLS.md)。
 
 ## 目录
 
 - [`beginner/`](beginner/README.md) —— 基础概念里容易被忽略的坑
 - [`intermediate/`](intermediate/README.md) —— 事务、锁、并发
+- [`advanced/`](advanced/README.md) —— 生产向：调优、诊断
 
 新增主题时，在对应难度目录下建一个编号子目录，放 `README.md` + `.sql`，再在该
-目录的 `README.md` 表格里加一行即可。
+目录的 `README.md` 表格和根目录的 [`PITFALLS.md`](PITFALLS.md) 里各加一行。
