@@ -1,41 +1,36 @@
 # mysql-lab
 
-Local MySQL environment for learning and testing (currently focused on deadlocks).
+从真实场景出发学 MySQL 的动手实验室：每个主题都是一个可以实际跑起来的 demo，
+而不只是一段结论。按难度分为初级 / 中级 / 高级。
 
-## MySQL instance
+## 环境（Docker）
 
-- Type: portable (noinstall ZIP) MySQL 8.4.11 Community Server, not a Windows service
-- Location: `C:\Users\DecVens\Desktop\programs\mysql-8.4.11-winx64`
-- Host: `127.0.0.1`, Port: `3306`
-- User: `root`, Password: (empty)
-
-Start / stop:
+需要本机装好 Docker（含 Compose）。
 
 ```bash
-./start.sh
-./stop.sh
+./start.sh    # 启动 MySQL 8.4 容器，并等到它就绪
+./client.sh   # 打开交互式 mysql 客户端（root，无密码）
+./stop.sh     # 停止容器（保留数据）
+./reset.sh    # 停止容器并清空数据，恢复到干净状态
 ```
 
-Connect with the client:
+连接信息：host `127.0.0.1`，port `3306`，user `root`，无密码。
+
+## 怎么用这个仓库
+
+每个 demo 都在自己的目录下，包含一个 `README.md`（讲清楚要学什么、怎么跑、为什么
+会这样）和对应的 `.sql` 文件。跟着 README 用 client 跑：
 
 ```bash
-"C:/Users/DecVens/Desktop/programs/mysql-8.4.11-winx64/bin/mysql.exe" -h 127.0.0.1 -P 3306 -u root
+./client.sh < beginner/01-order-by-tie-order/demo.sql
 ```
 
-## Deadlock demo
+有些 demo（比如死锁）需要开两个独立的 client 会话，对应 README 会写清楚。
 
-`sql/setup.sql` creates a `deadlock_lab` database with an `accounts` table (Alice, Bob).
+## 目录
 
-To reproduce a classic deadlock, open two separate `mysql` client sessions:
+- [`beginner/`](beginner/README.md) —— 基础概念里容易被忽略的坑
+- [`intermediate/`](intermediate/README.md) —— 事务、锁、并发
 
-1. In session A, run the first `UPDATE` from `sql/session_a.sql` (locks row id=1).
-2. In session B, run all of `sql/session_b.sql` (locks row id=2, then blocks trying to lock row id=1).
-3. Back in session A, run the second `UPDATE` (tries to lock row id=2) — MySQL's deadlock detector kills one transaction with error 1213 `Deadlock found when trying to get lock; try restarting transaction`.
-
-Inspect the deadlock details afterward:
-
-```sql
-SHOW ENGINE INNODB STATUS\G
-```
-
-(look at the "LATEST DETECTED DEADLOCK" section)
+新增主题时，在对应难度目录下建一个编号子目录，放 `README.md` + `.sql`，再在该
+目录的 `README.md` 表格里加一行即可。
