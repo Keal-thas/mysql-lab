@@ -21,13 +21,12 @@
 13. `intermediate/07` Next-Key Lock 范围判断
 14. `advanced/01` 慢查询定位与调优思路
 15. `advanced/02` Online DDL：ALGORITHM 和 LOCK
+16. `advanced/03` COUNT(*) 优化
 
 ## 下一批值得补的案例（按优先级）
 
 ### 中优先级
 
-- **慢查询之外：`COUNT(*)` 优化**：为什么 `COUNT(*)` 在大表上慢，近似值/维护计数
-  表两种思路。
 - **binlog 格式与用途**：STATEMENT / ROW / MIXED 的区别，配合 `mysqlbinlog` 做
   一次最小可复现的 point-in-time 恢复。
 - **`SHOW PROCESSLIST` / Performance Schema 排查连接问题**："Too many
