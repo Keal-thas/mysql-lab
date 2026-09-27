@@ -30,6 +30,9 @@
       LOGS` 有文件）都确实生效
 - [x] 新增 `intermediate/05-mvcc-read-view`：REPEATABLE READ vs READ
       COMMITTED 下 Read View 生成时机的对比 demo（ROADMAP 高优先级案例之一）
+- [x] 新增 `intermediate/06-isolation-levels`：脏读（READ UNCOMMITTED）和
+      幻读（READ COMMITTED vs REPEATABLE READ）的实测对比（ROADMAP 高优先级
+      案例之一）
 
 ## 怎么用这个仓库
 

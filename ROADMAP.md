@@ -16,14 +16,13 @@
 8. `intermediate/03` 间隙锁导致意外阻塞
 9. `intermediate/04` 忘了提交的事务堵住一整张表
 10. `intermediate/05` MVCC / Read View
-11. `advanced/01` 慢查询定位与调优思路
+11. `intermediate/06` 隔离级别对比：脏读 / 幻读
+12. `advanced/01` 慢查询定位与调优思路
 
 ## 下一批值得补的案例（按优先级）
 
 ### 高优先级
 
-- **隔离级别对比**：同一段并发脚本，分别在 READ COMMITTED / REPEATABLE READ 下跑，
-  对比脏读、不可重复读、幻读是否出现。适合放 `intermediate/`。
 - **Next-Key Lock 范围判断**：给定一个联合索引和一条 `WHERE` 条件，锁到底覆盖哪个
   区间——间隙锁 demo 的进阶版。适合放 `intermediate/`。
 - **覆盖索引 / index-only scan**：EXPLAIN 里 `Using index` 和 `Using index
