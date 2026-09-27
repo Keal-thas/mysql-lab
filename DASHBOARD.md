@@ -17,6 +17,8 @@
 - [ ] binlog 格式/point-in-time 恢复案例做不了：`mysql-lab` 容器和 host 上都
       没有 `mysqlbinlog` 客户端。要做的话得先给 `docker-compose.yml` 加一个
       带完整客户端工具的镜像，见 `ROADMAP.md` 中优先级里的说明
+- [ ] 主从复制延迟 demo 需要往 `docker-compose.yml` 加一个从库容器，属于
+      基础设施改动，先没动，见 `ROADMAP.md` 低优先级里的说明
 
 ## 已完成
 
@@ -51,6 +53,8 @@
       管理员预留连接
 - [x] 新增 `advanced/05-json-generated-column-index`：JSON 字段用 STORED
       生成列 + 索引，实测无索引/表达式命中索引/生成列名命中覆盖索引三种耗时
+- [x] 新增 `advanced/06-partitioning`：实测分区裁剪何时生效/失效，以及
+      DROP PARTITION 比同量级 DELETE 快一到两个数量级
 
 ## 怎么用这个仓库
 

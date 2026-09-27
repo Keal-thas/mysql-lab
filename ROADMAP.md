@@ -24,6 +24,7 @@
 16. `advanced/03` COUNT(*) 优化
 17. `advanced/04` SHOW PROCESSLIST / Performance Schema 排查连接问题
 18. `advanced/05` JSON 类型的索引方式（生成列 + 索引）
+19. `advanced/06` 分区表：适用场景与注意事项
 
 ## 下一批值得补的案例（按优先级）
 
@@ -38,8 +39,10 @@
 
 ### 低优先级 / 视兴趣再做
 
-- 分区表的适用场景与注意事项
-- 主从复制延迟的最小可复现 demo
+- 主从复制延迟的最小可复现 demo。**需要基础设施改动**：得往
+  `docker-compose.yml` 里加一个从库容器（配置 `server-id`、
+  `CHANGE REPLICATION SOURCE TO`），比单纯写文档/demo 的改动范围大，先搁置，
+  等用户明确要做的时候再动 compose 配置。
 
 ## 新增一个案例的步骤
 

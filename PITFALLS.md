@@ -22,5 +22,6 @@
 | 高级 | [COUNT(*) 优化](advanced/03-count-star/) | InnoDB 的 COUNT(*) 是真扫描，不是查现成的行数；近似值几乎零成本但不准，维护计数表精确但要多付出写入代价 |
 | 高级 | [SHOW PROCESSLIST / Performance Schema 排查连接问题](advanced/04-connection-troubleshooting/) | Sleep 状态分不出连接有没有未提交事务，得联查 Performance Schema；root 因为管理员预留连接能在 Too many connections 时多连进去一个 |
 | 高级 | [JSON 类型的索引方式（生成列 + 索引）](advanced/05-json-generated-column-index/) | JSON 列不能直接建索引，得靠 STORED 生成列抽出字段再建索引；直接写生成列名比写原始 JSON 表达式快，因为前者是覆盖索引 |
+| 高级 | [分区表：适用场景与注意事项](advanced/06-partitioning/) | 条件包一层函数会让分区裁剪失效，跟索引失效是同一类坑；DROP PARTITION 删同量级数据比 DELETE 快一到两个数量级 |
 
 新增案例时在这里加一行，同时更新对应级别目录下的 `README.md`。
