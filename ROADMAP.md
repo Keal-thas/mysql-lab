@@ -23,6 +23,7 @@
 15. `advanced/02` Online DDL：ALGORITHM 和 LOCK
 16. `advanced/03` COUNT(*) 优化
 17. `advanced/04` SHOW PROCESSLIST / Performance Schema 排查连接问题
+18. `advanced/05` JSON 类型的索引方式（生成列 + 索引）
 
 ## 下一批值得补的案例（按优先级）
 
@@ -37,7 +38,6 @@
 
 ### 低优先级 / 视兴趣再做
 
-- JSON 类型的索引方式（生成列 + 索引）
 - 分区表的适用场景与注意事项
 - 主从复制延迟的最小可复现 demo
 

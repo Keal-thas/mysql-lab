@@ -49,6 +49,8 @@
 - [x] 新增 `advanced/04-connection-troubleshooting`：联查 Performance Schema
       找出"空闲且有未提交事务"的连接；脚本实测 Too many connections + root
       管理员预留连接
+- [x] 新增 `advanced/05-json-generated-column-index`：JSON 字段用 STORED
+      生成列 + 索引，实测无索引/表达式命中索引/生成列名命中覆盖索引三种耗时
 
 ## 怎么用这个仓库
 
