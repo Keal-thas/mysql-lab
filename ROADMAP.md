@@ -10,23 +10,24 @@
 2. `beginner/02` EXPLAIN 怎么读
 3. `beginner/04` 联合索引最左前缀原则
 4. `beginner/03` 隐式类型转换让索引失效
-5. `beginner/06` 覆盖索引 / index-only scan
-6. `beginner/05` 大 OFFSET 分页越翻越慢
-7. `intermediate/01` 死锁
-8. `intermediate/02` 死锁发生后怎么排查
-9. `intermediate/03` 间隙锁导致意外阻塞
-10. `intermediate/04` 忘了提交的事务堵住一整张表
-11. `intermediate/05` MVCC / Read View
-12. `intermediate/06` 隔离级别对比：脏读 / 幻读
-13. `intermediate/07` Next-Key Lock 范围判断
-14. `advanced/01` 慢查询定位与调优思路
-15. `advanced/02` Online DDL：ALGORITHM 和 LOCK
-16. `advanced/03` COUNT(*) 优化
-17. `advanced/04` SHOW PROCESSLIST / Performance Schema 排查连接问题
-18. `advanced/05` JSON 类型的索引方式（生成列 + 索引）
-19. `advanced/06` 分区表：适用场景与注意事项
-20. `advanced/07` binlog 格式与用途：point-in-time 恢复
-21. `advanced/08` 主从复制延迟的最小可复现 demo
+5. `beginner/07` 长数字/长字符串"看起来不一样、比出来却一样"
+6. `beginner/06` 覆盖索引 / index-only scan
+7. `beginner/05` 大 OFFSET 分页越翻越慢
+8. `intermediate/01` 死锁
+9. `intermediate/02` 死锁发生后怎么排查
+10. `intermediate/03` 间隙锁导致意外阻塞
+11. `intermediate/04` 忘了提交的事务堵住一整张表
+12. `intermediate/05` MVCC / Read View
+13. `intermediate/06` 隔离级别对比：脏读 / 幻读
+14. `intermediate/07` Next-Key Lock 范围判断
+15. `advanced/01` 慢查询定位与调优思路
+16. `advanced/02` Online DDL：ALGORITHM 和 LOCK
+17. `advanced/03` COUNT(*) 优化
+18. `advanced/04` SHOW PROCESSLIST / Performance Schema 排查连接问题
+19. `advanced/05` JSON 类型的索引方式（生成列 + 索引）
+20. `advanced/06` 分区表：适用场景与注意事项
+21. `advanced/07` binlog 格式与用途：point-in-time 恢复
+22. `advanced/08` 主从复制延迟的最小可复现 demo
 
 ## 下一批值得补的案例
 

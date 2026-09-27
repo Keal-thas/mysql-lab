@@ -59,6 +59,10 @@
       服务（`profiles: ["replica"]`，不随默认 `up -d` 启动）
 - [x] ROADMAP 里原本因环境限制卡住的两个案例（binlog/复制延迟）都做完了，
       待办列表清空
+- [x] 新增 `beginner/07-numeric-precision-pitfalls`：长数字/长字符串"看起来
+      不一样、比出来却一样"的四种原因（FLOAT/DOUBLE 精度丢失、INT/VARCHAR
+      超范围截断、VARCHAR 不加引号查询触发隐式转换），来自和用户对话时的
+      真实疑惑，逐一实测复现
 
 ## 怎么用这个仓库
 
