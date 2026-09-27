@@ -14,6 +14,9 @@
 
 - [ ] 对比完 Starlight 和 MkDocs Material，定下用哪个之后，把没选中的那个从
       `docker-compose.yml` 里删掉（现在两个同时占着资源）
+- [ ] binlog 格式/point-in-time 恢复案例做不了：`mysql-lab` 容器和 host 上都
+      没有 `mysqlbinlog` 客户端。要做的话得先给 `docker-compose.yml` 加一个
+      带完整客户端工具的镜像，见 `ROADMAP.md` 中优先级里的说明
 
 ## 已完成
 
@@ -43,6 +46,9 @@
       至此高优先级 backlog 全部完成）
 - [x] 新增 `advanced/03-count-star`：实测 COUNT(*) 在 InnoDB 上是真扫描，
       对比近似值（information_schema.tables）和触发器维护计数表两种方案
+- [x] 新增 `advanced/04-connection-troubleshooting`：联查 Performance Schema
+      找出"空闲且有未提交事务"的连接；脚本实测 Too many connections + root
+      管理员预留连接
 
 ## 怎么用这个仓库
 

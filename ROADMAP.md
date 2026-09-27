@@ -22,15 +22,18 @@
 14. `advanced/01` 慢查询定位与调优思路
 15. `advanced/02` Online DDL：ALGORITHM 和 LOCK
 16. `advanced/03` COUNT(*) 优化
+17. `advanced/04` SHOW PROCESSLIST / Performance Schema 排查连接问题
 
 ## 下一批值得补的案例（按优先级）
 
 ### 中优先级
 
 - **binlog 格式与用途**：STATEMENT / ROW / MIXED 的区别，配合 `mysqlbinlog` 做
-  一次最小可复现的 point-in-time 恢复。
-- **`SHOW PROCESSLIST` / Performance Schema 排查连接问题**："Too many
-  connections"、长时间未提交的连接怎么定位。
+  一次最小可复现的 point-in-time 恢复。**卡住了**：`mysql-lab` 用的 MySQL 8.4
+  官方镜像里没带 `mysqlbinlog` 这个客户端（`docker exec mysql-lab which
+  mysqlbinlog` 找不到），host 机器上也没装，没法写出真的跑得通的复现步骤。
+  想继续做的话，得先给 `docker-compose.yml` 加一个带完整客户端工具的镜像/
+  sidecar，这是个基础设施改动，先搁置。
 
 ### 低优先级 / 视兴趣再做
 

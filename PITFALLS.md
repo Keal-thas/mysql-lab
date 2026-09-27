@@ -20,5 +20,6 @@
 | 高级 | [慢查询定位与调优思路](advanced/01-slow-query-tuning/) | 慢查询日志 + EXPLAIN ANALYZE 定位问题；索引选择性差时优化器可能主动放弃索引 |
 | 高级 | [Online DDL：ALGORITHM 和 LOCK](advanced/02-online-ddl/) | INSTANT 加列跟行数无关都是毫秒级；INPLACE+LOCK=NONE 不挡并发写；COPY+LOCK=EXCLUSIVE 会让并发写硬等到 ALTER 结束 |
 | 高级 | [COUNT(*) 优化](advanced/03-count-star/) | InnoDB 的 COUNT(*) 是真扫描，不是查现成的行数；近似值几乎零成本但不准，维护计数表精确但要多付出写入代价 |
+| 高级 | [SHOW PROCESSLIST / Performance Schema 排查连接问题](advanced/04-connection-troubleshooting/) | Sleep 状态分不出连接有没有未提交事务，得联查 Performance Schema；root 因为管理员预留连接能在 Too many connections 时多连进去一个 |
 
 新增案例时在这里加一行，同时更新对应级别目录下的 `README.md`。
