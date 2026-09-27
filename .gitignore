@@ -1,2 +1,6 @@
 .idea/
 .DS_Store
+docs-starlight/node_modules/
+docs-starlight/.astro/
+docs-starlight/dist/
+docs-starlight/src/content/docs/

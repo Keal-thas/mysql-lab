@@ -1,0 +1,13 @@
+{
+  "name": "mysql-lab-docs-starlight",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "sync": "node sync-docs.mjs",
+    "dev": "astro dev"
+  },
+  "dependencies": {
+    "astro": "^4.16.0",
+    "@astrojs/starlight": "^0.28.0"
+  }
+}

@@ -49,5 +49,19 @@ services:
     ports:
       - "127.0.0.1:13382:8000"
 
+  # 纯粹用来对比效果：Starlight (Astro) 版的同一批文档，http://127.0.0.1:13383。
+  # 没有官方现成镜像，用 node 跑一个最小 Astro+Starlight 项目，sync-docs.mjs
+  # 把仓库的 md 同步进去并补上 Starlight 要求的 title frontmatter。
+  docs-starlight:
+    image: node:20-alpine
+    container_name: mysql-lab-docs-starlight
+    working_dir: /app
+    volumes:
+      - ./:/repo:ro
+      - ./docs-starlight:/app
+    command: sh -c "npm install --no-fund --no-audit && node sync-docs.mjs && npm run dev -- --host 0.0.0.0 --port 4321"
+    ports:
+      - "127.0.0.1:13383:4321"
+
 volumes:
   mysql-lab-data:
