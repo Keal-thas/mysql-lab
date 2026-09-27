@@ -23,5 +23,7 @@
 | 高级 | [SHOW PROCESSLIST / Performance Schema 排查连接问题](advanced/04-connection-troubleshooting/) | Sleep 状态分不出连接有没有未提交事务，得联查 Performance Schema；root 因为管理员预留连接能在 Too many connections 时多连进去一个 |
 | 高级 | [JSON 类型的索引方式（生成列 + 索引）](advanced/05-json-generated-column-index/) | JSON 列不能直接建索引，得靠 STORED 生成列抽出字段再建索引；直接写生成列名比写原始 JSON 表达式快，因为前者是覆盖索引 |
 | 高级 | [分区表：适用场景与注意事项](advanced/06-partitioning/) | 条件包一层函数会让分区裁剪失效，跟索引失效是同一类坑；DROP PARTITION 删同量级数据比 DELETE 快一到两个数量级 |
+| 高级 | [binlog 格式与用途：point-in-time 恢复](advanced/07-binlog-recovery/) | 只有全量备份不够，配合 binlog 才能精确恢复到事故发生前一刻；一键脚本演示备份+好的修改+误删+恢复全流程 |
+| 高级 | [主从复制延迟的最小可复现 demo](advanced/08-replication-lag/) | 200 万行的写入爆发让从库肉眼可见地落后几秒，再自己追平；复制延迟是异步复制的天生代价，不是 bug |
 
 新增案例时在这里加一行，同时更新对应级别目录下的 `README.md`。

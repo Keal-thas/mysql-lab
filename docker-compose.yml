@@ -63,5 +63,41 @@ services:
     ports:
       - "127.0.0.1:13383:4321"
 
+  # mysqlbinlog + mysql 客户端，专门给 advanced/07-binlog-recovery 用。
+  # 不随 `docker compose up -d` 自动启动（profile 隔离，不占资源）：
+  #   docker compose run --rm binlog-tools mysqlbinlog ...
+  # 为什么需要单独镜像：mysql:8.4 官方镜像在 arm64（Apple Silicon）上基于
+  # Oracle Linux 的 server-minimal 包，不带 mysqlbinlog；MySQL 官方 Debian/RPM
+  # 仓库也都没发布 arm64 版的客户端工具包，mysqlbinlog 只有 amd64 构建
+  # （在 mysql-community-server-core 这个"服务器"包里，不是客户端包），
+  # 所以这个镜像强制 --platform=linux/amd64，靠 Docker Desktop 的 x86
+  # 模拟跑，见 tools/mysqlbinlog/Dockerfile 里的详细说明。
+  binlog-tools:
+    build: ./tools/mysqlbinlog
+    container_name: mysql-lab-binlog-tools
+    profiles: ["tools"]
+    volumes:
+      - mysql-lab-data:/var/lib/mysql:ro
+
+  # 从库，专门给 advanced/08-replication-lag 用。不随 `docker compose up -d`
+  # 自动启动（profile 隔离）：
+  #   docker compose --profile replica up -d mysql-replica
+  # 复制关系需要手动建立一次，见该 demo 的 README。
+  mysql-replica:
+    image: mysql:8.4
+    container_name: mysql-lab-replica
+    profiles: ["replica"]
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+    command: >
+      --server-id=2
+      --log-bin=mysql-bin
+      --read-only=1
+    ports:
+      - "127.0.0.1:13307:3306"
+    volumes:
+      - mysql-lab-replica-data:/var/lib/mysql
+
 volumes:
   mysql-lab-data:
+  mysql-lab-replica-data:

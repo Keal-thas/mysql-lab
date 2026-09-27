@@ -14,11 +14,6 @@
 
 - [ ] 对比完 Starlight 和 MkDocs Material，定下用哪个之后，把没选中的那个从
       `docker-compose.yml` 里删掉（现在两个同时占着资源）
-- [ ] binlog 格式/point-in-time 恢复案例做不了：`mysql-lab` 容器和 host 上都
-      没有 `mysqlbinlog` 客户端。要做的话得先给 `docker-compose.yml` 加一个
-      带完整客户端工具的镜像，见 `ROADMAP.md` 中优先级里的说明
-- [ ] 主从复制延迟 demo 需要往 `docker-compose.yml` 加一个从库容器，属于
-      基础设施改动，先没动，见 `ROADMAP.md` 低优先级里的说明
 
 ## 已完成
 
@@ -55,6 +50,15 @@
       生成列 + 索引，实测无索引/表达式命中索引/生成列名命中覆盖索引三种耗时
 - [x] 新增 `advanced/06-partitioning`：实测分区裁剪何时生效/失效，以及
       DROP PARTITION 比同量级 DELETE 快一到两个数量级
+- [x] 新增 `advanced/07-binlog-recovery`：一键脚本演示"全量备份 + binlog
+      精确恢复到事故发生前一刻"的完整流程。为此往 `docker-compose.yml`
+      加了 `tools/mysqlbinlog/`（arm64 上官方镜像不带这个工具，见该目录
+      Dockerfile 的注释）
+- [x] 新增 `advanced/08-replication-lag`：从零搭从库，实测 200 万行写入
+      造成的复制延迟和追平过程。往 `docker-compose.yml` 加了 `mysql-replica`
+      服务（`profiles: ["replica"]`，不随默认 `up -d` 启动）
+- [x] ROADMAP 里原本因环境限制卡住的两个案例（binlog/复制延迟）都做完了，
+      待办列表清空
 
 ## 怎么用这个仓库
 

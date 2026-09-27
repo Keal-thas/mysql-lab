@@ -8,3 +8,5 @@
 | 04 | [SHOW PROCESSLIST / Performance Schema 排查连接问题](04-connection-troubleshooting/) | 区分"空闲连接"和"空闲且有未提交事务的连接"；Too many connections 时 root 为什么还能连进去 |
 | 05 | [JSON 类型的索引方式（生成列 + 索引）](05-json-generated-column-index/) | JSON 列不能直接建索引，靠生成列抽出字段再建索引；写法不同（表达式 vs 生成列名）执行计划也不同 |
 | 06 | [分区表：适用场景与注意事项](06-partitioning/) | 分区裁剪何时生效/失效；DROP PARTITION 比同量级的 DELETE 快一到两个数量级 |
+| 07 | [binlog 格式与用途：point-in-time 恢复](07-binlog-recovery/) | 全量备份 + binlog 精确恢复到事故发生前一刻；一键脚本演示完整流程 |
+| 08 | [主从复制延迟的最小可复现 demo](08-replication-lag/) | 从零搭一个从库，实测大批量写入造成的 Seconds_Behind_Source 延迟和追平过程 |

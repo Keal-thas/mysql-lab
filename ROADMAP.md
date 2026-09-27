@@ -25,24 +25,33 @@
 17. `advanced/04` SHOW PROCESSLIST / Performance Schema 排查连接问题
 18. `advanced/05` JSON 类型的索引方式（生成列 + 索引）
 19. `advanced/06` 分区表：适用场景与注意事项
+20. `advanced/07` binlog 格式与用途：point-in-time 恢复
+21. `advanced/08` 主从复制延迟的最小可复现 demo
 
-## 下一批值得补的案例（按优先级）
+## 下一批值得补的案例
 
-### 中优先级
+目前列表是空的——想到新坑再往这儿加。上一批的 binlog/复制延迟两个案例原本
+因为环境限制（见下面"这两个案例怎么做出来的"）卡住过，后来直接动了
+`docker-compose.yml`（加了 `tools/mysqlbinlog/` 镜像和 `mysql-replica` 服务）
+才解决，都已经在 [`advanced/07-binlog-recovery`](advanced/07-binlog-recovery/)
+和 [`advanced/08-replication-lag`](advanced/08-replication-lag/) 里做完了。
 
-- **binlog 格式与用途**：STATEMENT / ROW / MIXED 的区别，配合 `mysqlbinlog` 做
-  一次最小可复现的 point-in-time 恢复。**卡住了**：`mysql-lab` 用的 MySQL 8.4
-  官方镜像里没带 `mysqlbinlog` 这个客户端（`docker exec mysql-lab which
-  mysqlbinlog` 找不到），host 机器上也没装，没法写出真的跑得通的复现步骤。
-  想继续做的话，得先给 `docker-compose.yml` 加一个带完整客户端工具的镜像/
-  sidecar，这是个基础设施改动，先搁置。
+### 这两个案例怎么做出来的（备查）
 
-### 低优先级 / 视兴趣再做
-
-- 主从复制延迟的最小可复现 demo。**需要基础设施改动**：得往
-  `docker-compose.yml` 里加一个从库容器（配置 `server-id`、
-  `CHANGE REPLICATION SOURCE TO`），比单纯写文档/demo 的改动范围大，先搁置，
-  等用户明确要做的时候再动 compose 配置。
+- **`mysqlbinlog`**：`mysql-lab` 用的官方 `mysql:8.4` 镜像在 arm64（Apple
+  Silicon）上是 Oracle Linux 的 `server-minimal` 包，不带这个工具；查证过
+  MySQL 官方 yum/apt 仓库都没发布 arm64 版的客户端工具包，`mysqlbinlog`
+  只存在于 amd64 构建里，还是打包在"服务器"包（`mysql-community-server-core`）
+  里而不是客户端包。解法是 `tools/mysqlbinlog/Dockerfile`：一个强制
+  `--platform=linux/amd64` 的 Debian 镜像，靠 Docker Desktop 的 x86 模拟器跑，
+  在 `docker-compose.yml` 里用 `profiles: ["tools"]` 隔离，不占默认资源。
+- **从库**：`docker-compose.yml` 加了 `mysql-replica` 服务，同样用
+  `profiles: ["replica"]` 隔离。**踩过的坑**：造这个 demo 时手滑跑了一次裸的
+  `docker compose down`，以为 `--profile replica` 会限定只删从库，结果把
+  整个项目（包括主库 `mysql`）都停掉重建了——`down` 不认 `--profile`/服务名
+  这种缩小范围的参数，会把项目里所有服务都算进去。数据本身没丢（卷没删），
+  但这是个值得记住的教训：删单个服务用 `docker compose rm -sf <service>`，
+  永远别在这个项目目录下跑不带参数的 `docker compose down`。
 
 ## 新增一个案例的步骤
 
