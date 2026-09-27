@@ -28,6 +28,8 @@
       改配置
 - [x] 验证慢查询日志（`mysql.slow_log` 里能查到）和 binlog（`SHOW BINARY
       LOGS` 有文件）都确实生效
+- [x] 新增 `intermediate/05-mvcc-read-view`：REPEATABLE READ vs READ
+      COMMITTED 下 Read View 生成时机的对比 demo（ROADMAP 高优先级坑之一）
 
 ## 怎么用这个仓库
 
