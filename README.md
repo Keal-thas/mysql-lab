@@ -49,15 +49,15 @@
 有些 demo（比如死锁、间隙锁）需要开两个甚至三个独立的 client 会话，对应 README
 会写清楚。
 
-想快速扫一眼有哪些坑、每个坑一句话是什么，看 [`PITFALLS.md`](PITFALLS.md)。
-想知道学习顺序和接下来打算补哪些坑，看 [`ROADMAP.md`](ROADMAP.md)。
+想快速扫一眼有哪些案例、每个案例一句话是什么，看 [`PITFALLS.md`](PITFALLS.md)。
+想知道学习顺序和接下来打算补哪些案例，看 [`ROADMAP.md`](ROADMAP.md)。
 
 ## 目录
 
-- [`beginner/`](beginner/README.md) —— 基础概念里容易被忽略的坑
+- [`beginner/`](beginner/README.md) —— 基础概念里容易被忽略的细节
 - [`intermediate/`](intermediate/README.md) —— 事务、锁、并发
 - [`advanced/`](advanced/README.md) —— 生产向：调优、诊断
 
-新增主题时，按 [`ROADMAP.md`](ROADMAP.md) 里"新增一个坑的步骤"来做：在对应难度
+新增主题时，按 [`ROADMAP.md`](ROADMAP.md) 里"新增一个案例的步骤"来做：在对应难度
 目录下建一个编号子目录，放 `README.md` + `.sql`，再在该目录的 `README.md` 表格、
 根目录的 [`PITFALLS.md`](PITFALLS.md) 和 `ROADMAP.md` 里各加一行。

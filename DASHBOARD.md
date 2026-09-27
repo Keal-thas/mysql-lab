@@ -5,8 +5,8 @@
 - [Adminer 网页 SQL 客户端](http://127.0.0.1:13380/?server=mysql&username=root)
   —— 密码 `root`
 - [Dozzle 容器日志](http://127.0.0.1:13381)
-- [ROADMAP：学习顺序 + 待补的坑](ROADMAP.md)
-- [PITFALLS：坑的速查表](PITFALLS.md)
+- [ROADMAP：学习顺序 + 待补的案例](ROADMAP.md)
+- [PITFALLS：案例索引](PITFALLS.md)
 - [Starlight 版文档（对比用）](http://127.0.0.1:13383) —— 同一批 md，
   换一套渲染方案看效果，不是正式用的那个
 
@@ -29,7 +29,7 @@
 - [x] 验证慢查询日志（`mysql.slow_log` 里能查到）和 binlog（`SHOW BINARY
       LOGS` 有文件）都确实生效
 - [x] 新增 `intermediate/05-mvcc-read-view`：REPEATABLE READ vs READ
-      COMMITTED 下 Read View 生成时机的对比 demo（ROADMAP 高优先级坑之一）
+      COMMITTED 下 Read View 生成时机的对比 demo（ROADMAP 高优先级案例之一）
 
 ## 怎么用这个仓库
 

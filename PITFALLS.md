@@ -1,8 +1,8 @@
-# 坑列表
+# 案例索引
 
-所有 demo 的一句话简述，方便扫一眼找相关的坑。想看原理和复现步骤，点进对应链接。
+所有 demo 的一句话简述，方便扫一眼找相关的案例。想看原理和复现步骤，点进对应链接。
 
-| 级别 | 坑 | 一句话简述 |
+| 级别 | 案例 | 一句话简述 |
 |------|----|-----------|
 | 初级 | [ORDER BY 平局顺序](beginner/01-order-by-tie-order/) | 排序列有相同值时，谁先谁后不保证固定，靠索引/filesort 的实现细节决定 |
 | 初级 | [EXPLAIN 怎么读](beginner/02-explain-basics/) | 执行计划的 type/key/rows/Extra 分别在说什么，EXPLAIN 只是估算、EXPLAIN ANALYZE 才是真跑一遍 |
@@ -16,4 +16,4 @@
 | 中级 | [MVCC / Read View](intermediate/05-mvcc-read-view/) | REPEATABLE READ 的事务只在第一条 SELECT 时生成一次快照，READ COMMITTED 每条 SELECT 都重新生成 |
 | 高级 | [慢查询定位与调优思路](advanced/01-slow-query-tuning/) | 慢查询日志 + EXPLAIN ANALYZE 定位问题；索引选择性差时优化器可能主动放弃索引 |
 
-新增坑时在这里加一行，同时更新对应级别目录下的 `README.md`。
+新增案例时在这里加一行，同时更新对应级别目录下的 `README.md`。
