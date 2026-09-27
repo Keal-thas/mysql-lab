@@ -21,6 +21,8 @@
 - [x] root 账号改成有密码（`root`/`root`），解决 Adminer 拒绝空密码登录
 - [x] 导入官方 `employees` 示例库（`./seed-employees.sh`），有真实体量数据
 - [x] `CURRICULUM.md`/`PROGRESS.md` 合并成一份 `ROADMAP.md`
+- [x] 文档面板从 docsify 换成 MkDocs Material（搜索、深浅色切换、
+      Mermaid 官方支持，`mkdocs.yml` 里配置）
 
 ## 怎么用这个仓库
 

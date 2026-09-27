@@ -10,4 +10,4 @@ until docker compose exec -T mysql mysqladmin ping -h 127.0.0.1 -uroot -proot --
 done
 echo "[start] ready: 127.0.0.1:13306, user root, password root"
 echo "[start] open this one page, everything else is linked from it:"
-echo "[start]   http://127.0.0.1:13382/#/DASHBOARD"
+echo "[start]   http://127.0.0.1:13382"

@@ -32,9 +32,10 @@
   `client.sh`。
 - **Dozzle**（网页看容器日志）：http://127.0.0.1:13381 —— 实时看 `mysql-lab`
   容器（以及本机其他容器）的日志，不用 `docker exec` 进容器或敲 `docker logs`。
-- **文档面板**：http://127.0.0.1:13382/#/README —— 用 [docsify](https://docsify.js.org)
-  在浏览器里读这个仓库的所有 `.md` 文档（本文件、`ROADMAP.md`、`PITFALLS.md`、
-  各 demo 的 README），点里面的链接能直接跳转，不用开编辑器。
+- **文档面板**：http://127.0.0.1:13382 —— 用 [MkDocs
+  Material](https://squidfunk.github.io/mkdocs-material/) 在浏览器里读这个仓库
+  的所有 `.md` 文档（仪表盘、本文件、`ROADMAP.md`、`PITFALLS.md`、各 demo 的
+  README），带搜索、深浅色切换、Mermaid 图表渲染，配置见 `mkdocs.yml`。
 
 ## 怎么用这个仓库
 

@@ -1,0 +1,73 @@
+site_name: mysql-lab
+site_description: 从真实场景出发学 MySQL 的动手实验室
+docs_dir: docs
+exclude_docs: |
+  .git/
+  .idea/
+  .claude/
+  *.sh
+  Dockerfile
+  docker-compose.yml
+  mkdocs.yml
+  index.html
+  *.sql
+
+theme:
+  name: material
+  language: zh
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换到浅色
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到深色
+  features:
+    - navigation.instant
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+nav:
+  - 仪表盘: DASHBOARD.md
+  - README: README.md
+  - ROADMAP: ROADMAP.md
+  - PITFALLS: PITFALLS.md
+  - Beginner:
+      - beginner/README.md
+      - ORDER BY 平局顺序: beginner/01-order-by-tie-order/README.md
+      - EXPLAIN 怎么读: beginner/02-explain-basics/README.md
+      - 隐式类型转换: beginner/03-implicit-type-conversion/README.md
+      - 联合索引最左前缀: beginner/04-index-leftmost-prefix/README.md
+      - 大 OFFSET 分页: beginner/05-offset-pagination/README.md
+  - Intermediate:
+      - intermediate/README.md
+      - 死锁: intermediate/01-deadlock/README.md
+      - 死锁排查: intermediate/02-deadlock-analysis/README.md
+      - 间隙锁: intermediate/03-gap-lock/README.md
+      - 空闲事务阻塞DDL: intermediate/04-idle-transaction-blocks-ddl/README.md
+  - Advanced:
+      - advanced/README.md
+      - 慢查询调优: advanced/01-slow-query-tuning/README.md

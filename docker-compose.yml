@@ -38,14 +38,16 @@ services:
       - "127.0.0.1:13381:8080"
 
   # 网页看仓库里的 md 文档（README/ROADMAP/PITFALLS/各 demo 说明）：
-  # http://127.0.0.1:13382/#/README，nginx 只负责吐文件，渲染靠 index.html 里的 docsify。
+  # http://127.0.0.1:13382，MkDocs Material 官方镜像，配置见 mkdocs.yml。
   docs:
-    image: nginx:alpine
+    image: squidfunk/mkdocs-material:latest
     container_name: mysql-lab-docs
     volumes:
-      - ./:/usr/share/nginx/html:ro
+      - ./:/docs:ro
+      - ./mkdocs.yml:/mkdocs.yml:ro
+    command: ["serve", "-f", "/mkdocs.yml", "-a", "0.0.0.0:8000"]
     ports:
-      - "127.0.0.1:13382:80"
+      - "127.0.0.1:13382:8000"
 
 volumes:
   mysql-lab-data:
