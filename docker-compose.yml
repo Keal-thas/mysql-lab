@@ -3,11 +3,49 @@ services:
     image: mysql:8.4
     container_name: mysql-lab
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: "root"
+    # server-id + log-bin: 常开 binlog，配合 mysqlbinlog 命令行练手（二进制，网页看不了）。
+    # slow-query-log + log-output=TABLE: 慢查询直接写进 mysql.slow_log 表，用 Adminer 网页查。
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --slow-query-log=1
+      --long-query-time=1
+      --log-output=TABLE
     ports:
-      - "127.0.0.1:3306:3306"
+      - "127.0.0.1:13306:3306"
     volumes:
       - mysql-lab-data:/var/lib/mysql
+
+  # 网页版 SQL 客户端：http://127.0.0.1:13380，System 选 MySQL，
+  # Server 填 mysql，用户 root，密码 root。
+  adminer:
+    image: adminer:latest
+    container_name: mysql-lab-adminer
+    depends_on:
+      - mysql
+    ports:
+      - "127.0.0.1:13380:8080"
+
+  # 网页看所有容器的实时日志：http://127.0.0.1:13381，
+  # 不用 docker logs / docker exec 进容器看。
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: mysql-lab-dozzle
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "127.0.0.1:13381:8080"
+
+  # 网页看仓库里的 md 文档（README/ROADMAP/PITFALLS/各 demo 说明）：
+  # http://127.0.0.1:13382/#/README，nginx 只负责吐文件，渲染靠 index.html 里的 docsify。
+  docs:
+    image: nginx:alpine
+    container_name: mysql-lab-docs
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+    ports:
+      - "127.0.0.1:13382:80"
 
 volumes:
   mysql-lab-data:

@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 if [ -t 0 ]; then
-    docker compose exec mysql mysql -uroot "$@"
+    docker compose exec mysql mysql -uroot -proot "$@"
 else
-    docker compose exec -T mysql mysql -uroot "$@"
+    docker compose exec -T mysql mysql -uroot -proot "$@"
 fi

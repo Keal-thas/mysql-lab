@@ -5,7 +5,9 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 docker compose up -d
 echo "[start] waiting for mysql to be ready..."
-until docker compose exec -T mysql mysqladmin ping -h 127.0.0.1 --silent 2>/dev/null; do
+until docker compose exec -T mysql mysqladmin ping -h 127.0.0.1 -uroot -proot --silent 2>/dev/null; do
     sleep 1
 done
-echo "[start] ready: 127.0.0.1:3306, user root, no password"
+echo "[start] ready: 127.0.0.1:13306, user root, password root"
+echo "[start] adminer (web SQL client): http://127.0.0.1:13380"
+echo "[start] dozzle  (web container logs): http://127.0.0.1:13381"
