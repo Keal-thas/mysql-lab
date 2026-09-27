@@ -38,6 +38,9 @@
 - [x] 新增 `beginner/06-covering-index`：同一张表用四种 SELECT/WHERE 组合，
       对比 `Using index` 和 `Using index condition` 的区别（ROADMAP 高优先级
       案例之一）
+- [x] 新增 `advanced/02-online-ddl`：200 万行表上实测 INSTANT/INPLACE/COPY
+      三种 ALTER 算法的耗时和并发写入影响（ROADMAP 高优先级案例最后一项，
+      至此高优先级 backlog 全部完成）
 
 ## 怎么用这个仓库
 

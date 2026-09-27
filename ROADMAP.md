@@ -20,13 +20,9 @@
 12. `intermediate/06` 隔离级别对比：脏读 / 幻读
 13. `intermediate/07` Next-Key Lock 范围判断
 14. `advanced/01` 慢查询定位与调优思路
+15. `advanced/02` Online DDL：ALGORITHM 和 LOCK
 
 ## 下一批值得补的案例（按优先级）
-
-### 高优先级
-
-- **Online DDL 的 ALGORITHM/LOCK**：`ALTER TABLE` 在大表上加字段/加索引时，
-  INSTANT/INPLACE/COPY 对读写的影响。适合放 `advanced/`。
 
 ### 中优先级
 

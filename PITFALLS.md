@@ -18,5 +18,6 @@
 | 中级 | [隔离级别对比：脏读 / 幻读](intermediate/06-isolation-levels/) | READ UNCOMMITTED 能读到别人没提交的数据；REPEATABLE READ 的快照读比标准要求更强，天然不会幻读 |
 | 中级 | [Next-Key Lock 范围判断](intermediate/07-next-key-lock-ranges/) | 等值命中已有值锁两侧间隙、等值未命中只锁一个间隙、开区间锁到 supremum，三种情况范围完全不同 |
 | 高级 | [慢查询定位与调优思路](advanced/01-slow-query-tuning/) | 慢查询日志 + EXPLAIN ANALYZE 定位问题；索引选择性差时优化器可能主动放弃索引 |
+| 高级 | [Online DDL：ALGORITHM 和 LOCK](advanced/02-online-ddl/) | INSTANT 加列跟行数无关都是毫秒级；INPLACE+LOCK=NONE 不挡并发写；COPY+LOCK=EXCLUSIVE 会让并发写硬等到 ALTER 结束 |
 
 新增案例时在这里加一行，同时更新对应级别目录下的 `README.md`。
