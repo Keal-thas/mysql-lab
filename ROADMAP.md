@@ -17,14 +17,13 @@
 9. `intermediate/04` 忘了提交的事务堵住一整张表
 10. `intermediate/05` MVCC / Read View
 11. `intermediate/06` 隔离级别对比：脏读 / 幻读
-12. `advanced/01` 慢查询定位与调优思路
+12. `intermediate/07` Next-Key Lock 范围判断
+13. `advanced/01` 慢查询定位与调优思路
 
 ## 下一批值得补的案例（按优先级）
 
 ### 高优先级
 
-- **Next-Key Lock 范围判断**：给定一个联合索引和一条 `WHERE` 条件，锁到底覆盖哪个
-  区间——间隙锁 demo 的进阶版。适合放 `intermediate/`。
 - **覆盖索引 / index-only scan**：EXPLAIN 里 `Using index` 和 `Using index
   condition` 的区别，什么时候能避免回表。适合放 `beginner/` 或 `advanced/`。
 - **Online DDL 的 ALGORITHM/LOCK**：`ALTER TABLE` 在大表上加字段/加索引时，

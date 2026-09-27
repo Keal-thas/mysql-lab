@@ -15,6 +15,7 @@
 | 中级 | [忘了提交的事务堵住一整张表](intermediate/04-idle-transaction-blocks-ddl/) | 空闲事务占着元数据锁，别人一跑 DDL，连无关的 SELECT 都要排队 |
 | 中级 | [MVCC / Read View](intermediate/05-mvcc-read-view/) | REPEATABLE READ 的事务只在第一条 SELECT 时生成一次快照，READ COMMITTED 每条 SELECT 都重新生成 |
 | 中级 | [隔离级别对比：脏读 / 幻读](intermediate/06-isolation-levels/) | READ UNCOMMITTED 能读到别人没提交的数据；REPEATABLE READ 的快照读比标准要求更强，天然不会幻读 |
+| 中级 | [Next-Key Lock 范围判断](intermediate/07-next-key-lock-ranges/) | 等值命中已有值锁两侧间隙、等值未命中只锁一个间隙、开区间锁到 supremum，三种情况范围完全不同 |
 | 高级 | [慢查询定位与调优思路](advanced/01-slow-query-tuning/) | 慢查询日志 + EXPLAIN ANALYZE 定位问题；索引选择性差时优化器可能主动放弃索引 |
 
 新增案例时在这里加一行，同时更新对应级别目录下的 `README.md`。

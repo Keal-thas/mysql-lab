@@ -33,6 +33,8 @@
 - [x] 新增 `intermediate/06-isolation-levels`：脏读（READ UNCOMMITTED）和
       幻读（READ COMMITTED vs REPEATABLE READ）的实测对比（ROADMAP 高优先级
       案例之一）
+- [x] 新增 `intermediate/07-next-key-lock-ranges`：等值命中/未命中/开区间三种
+      `WHERE` 条件各自锁住哪个间隙的实测对比（ROADMAP 高优先级案例之一）
 
 ## 怎么用这个仓库
 
