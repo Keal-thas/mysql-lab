@@ -12,9 +12,6 @@
 
 ## 当前 TODO
 
-- [ ] 验证慢查询日志真的有数据：跑一条慢 SQL，去 Adminer 的
-      `mysql` 库 → `slow_log` 表确认能看到记录
-- [ ] 验证 binlog 生效：`./client.sh -e "SHOW BINARY LOGS;"` 确认有文件
 - [ ] 对比完 Starlight 和 MkDocs Material，定下用哪个之后，把没选中的那个从
       `docker-compose.yml` 里删掉（现在两个同时占着资源）
 
@@ -27,6 +24,10 @@
 - [x] `CURRICULUM.md`/`PROGRESS.md` 合并成一份 `ROADMAP.md`
 - [x] 文档面板从 docsify 换成 MkDocs Material（搜索、深浅色切换、
       Mermaid 官方支持，`mkdocs.yml` 里配置）
+- [x] `mkdocs.yml` 的 `nav` 改成自动生成（只手动钉住首页），新增 demo 不用再
+      改配置
+- [x] 验证慢查询日志（`mysql.slow_log` 里能查到）和 binlog（`SHOW BINARY
+      LOGS` 有文件）都确实生效
 
 ## 怎么用这个仓库
 
