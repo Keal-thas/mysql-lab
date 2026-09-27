@@ -9,6 +9,7 @@
 | 初级 | [隐式类型转换让索引失效](beginner/03-implicit-type-conversion/) | 字符串列拿数字字面量比较，索引基本失效，实测慢了近 800 倍 |
 | 初级 | [联合索引最左前缀原则](beginner/04-index-leftmost-prefix/) | 联合索引 (a,b) 只能加速 a、a+b，跳过 a 单独查 b 完全用不上 |
 | 初级 | [大 OFFSET 分页越翻越慢](beginner/05-offset-pagination/) | OFFSET 越大，被扫描又丢弃的行越多；游标分页翻到哪页都一样快 |
+| 初级 | [覆盖索引 / index-only scan](beginner/06-covering-index/) | 查询的列只要都在索引里就不用回表；Using index 是覆盖索引，Using index condition 还是要回表 |
 | 中级 | [死锁](intermediate/01-deadlock/) | 两个事务交叉锁不同行，互相等待形成死锁环，InnoDB 自动回滚一方 |
 | 中级 | [死锁发生后怎么排查](intermediate/02-deadlock-analysis/) | sys.innodb_lock_waits 看进行中的锁等待，SHOW ENGINE INNODB STATUS 看已发生的死锁详情 |
 | 中级 | [间隙锁导致意外阻塞](intermediate/03-gap-lock/) | REPEATABLE READ 下范围锁定读连"还不存在的数据"的间隙也锁住，插入新行会被卡住 |

@@ -35,6 +35,9 @@
       案例之一）
 - [x] 新增 `intermediate/07-next-key-lock-ranges`：等值命中/未命中/开区间三种
       `WHERE` 条件各自锁住哪个间隙的实测对比（ROADMAP 高优先级案例之一）
+- [x] 新增 `beginner/06-covering-index`：同一张表用四种 SELECT/WHERE 组合，
+      对比 `Using index` 和 `Using index condition` 的区别（ROADMAP 高优先级
+      案例之一）
 
 ## 怎么用这个仓库
 

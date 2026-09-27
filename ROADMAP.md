@@ -10,22 +10,21 @@
 2. `beginner/02` EXPLAIN 怎么读
 3. `beginner/04` 联合索引最左前缀原则
 4. `beginner/03` 隐式类型转换让索引失效
-5. `beginner/05` 大 OFFSET 分页越翻越慢
-6. `intermediate/01` 死锁
-7. `intermediate/02` 死锁发生后怎么排查
-8. `intermediate/03` 间隙锁导致意外阻塞
-9. `intermediate/04` 忘了提交的事务堵住一整张表
-10. `intermediate/05` MVCC / Read View
-11. `intermediate/06` 隔离级别对比：脏读 / 幻读
-12. `intermediate/07` Next-Key Lock 范围判断
-13. `advanced/01` 慢查询定位与调优思路
+5. `beginner/06` 覆盖索引 / index-only scan
+6. `beginner/05` 大 OFFSET 分页越翻越慢
+7. `intermediate/01` 死锁
+8. `intermediate/02` 死锁发生后怎么排查
+9. `intermediate/03` 间隙锁导致意外阻塞
+10. `intermediate/04` 忘了提交的事务堵住一整张表
+11. `intermediate/05` MVCC / Read View
+12. `intermediate/06` 隔离级别对比：脏读 / 幻读
+13. `intermediate/07` Next-Key Lock 范围判断
+14. `advanced/01` 慢查询定位与调优思路
 
 ## 下一批值得补的案例（按优先级）
 
 ### 高优先级
 
-- **覆盖索引 / index-only scan**：EXPLAIN 里 `Using index` 和 `Using index
-  condition` 的区别，什么时候能避免回表。适合放 `beginner/` 或 `advanced/`。
 - **Online DDL 的 ALGORITHM/LOCK**：`ALTER TABLE` 在大表上加字段/加索引时，
   INSTANT/INPLACE/COPY 对读写的影响。适合放 `advanced/`。
 
