@@ -8,11 +8,17 @@
 需要本机装好 Docker（含 Compose）。
 
 ```bash
-./start.sh    # 启动 MySQL 8.4 容器，并等到它就绪
-./client.sh   # 打开交互式 mysql 客户端（root/root）
-./stop.sh     # 停止容器（保留数据）
-./reset.sh    # 停止容器并清空数据，恢复到干净状态
+./start.sh           # 启动 MySQL 8.4 容器，并等到它就绪
+./client.sh          # 打开交互式 mysql 客户端（root/root）
+./seed-employees.sh  # 导入官方 employees 示例库（约 30 万行员工数据，可选）
+./stop.sh            # 停止容器（保留数据）
+./reset.sh           # 停止容器并清空数据，恢复到干净状态
 ```
+
+`seed-employees.sh` 导入的是 [datacharmer/test_db](https://github.com/datacharmer/test_db)
+——MySQL 社区常用的示例库，有真实体量的数据（约 30 万 `employees`、284 万
+`salaries`），比空库更适合验证索引、EXPLAIN、分页这些 demo 的效果。执行过
+`./reset.sh` 之后如果还想要这份数据，重新跑一次这个脚本就行。
 
 连接信息：host `127.0.0.1`，port `13306`，user `root`，password `root`。这个
 项目的所有本机端口都用 `133xx` 段，避免跟你机器上其他项目/服务（比如常见的
@@ -26,6 +32,9 @@
   `client.sh`。
 - **Dozzle**（网页看容器日志）：http://127.0.0.1:13381 —— 实时看 `mysql-lab`
   容器（以及本机其他容器）的日志，不用 `docker exec` 进容器或敲 `docker logs`。
+- **文档面板**：http://127.0.0.1:13382/#/README —— 用 [docsify](https://docsify.js.org)
+  在浏览器里读这个仓库的所有 `.md` 文档（本文件、`ROADMAP.md`、`PITFALLS.md`、
+  各 demo 的 README），点里面的链接能直接跳转，不用开编辑器。
 
 ## 怎么用这个仓库
 
