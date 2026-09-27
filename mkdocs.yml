@@ -5,11 +5,11 @@ exclude_docs: |
   .git/
   .idea/
   .claude/
+  docs-starlight/
   *.sh
   Dockerfile
   docker-compose.yml
   mkdocs.yml
-  index.html
   *.sql
 
 theme:
@@ -50,24 +50,8 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.inlinehilite
 
+
+# 不写 nav：MkDocs 会按 docs_dir 的目录结构自动生成完整导航，新增/删除文件
+# 不用来这里维护。唯一手动干预的地方是让 DASHBOARD.md 排在最前面当首页。
 nav:
   - 仪表盘: DASHBOARD.md
-  - README: README.md
-  - ROADMAP: ROADMAP.md
-  - PITFALLS: PITFALLS.md
-  - Beginner:
-      - beginner/README.md
-      - ORDER BY 平局顺序: beginner/01-order-by-tie-order/README.md
-      - EXPLAIN 怎么读: beginner/02-explain-basics/README.md
-      - 隐式类型转换: beginner/03-implicit-type-conversion/README.md
-      - 联合索引最左前缀: beginner/04-index-leftmost-prefix/README.md
-      - 大 OFFSET 分页: beginner/05-offset-pagination/README.md
-  - Intermediate:
-      - intermediate/README.md
-      - 死锁: intermediate/01-deadlock/README.md
-      - 死锁排查: intermediate/02-deadlock-analysis/README.md
-      - 间隙锁: intermediate/03-gap-lock/README.md
-      - 空闲事务阻塞DDL: intermediate/04-idle-transaction-blocks-ddl/README.md
-  - Advanced:
-      - advanced/README.md
-      - 慢查询调优: advanced/01-slow-query-tuning/README.md
