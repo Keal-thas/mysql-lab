@@ -9,5 +9,5 @@ until docker compose exec -T mysql mysqladmin ping -h 127.0.0.1 -uroot -proot --
     sleep 1
 done
 echo "[start] ready: 127.0.0.1:13306, user root, password root"
-echo "[start] adminer (web SQL client): http://127.0.0.1:13380"
-echo "[start] dozzle  (web container logs): http://127.0.0.1:13381"
+echo "[start] open this one page, everything else is linked from it:"
+echo "[start]   http://127.0.0.1:13382/#/DASHBOARD"
