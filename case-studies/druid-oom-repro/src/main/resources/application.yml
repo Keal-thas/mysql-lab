@@ -1,0 +1,18 @@
+# 场景二：显式配置 maxWait=60000（60秒），验证 Druid 是否真的会在 60s 后
+# 用 GetConnectionTimeoutException 打断 getConnection()，而不是无限等待。
+# 其余参数（connectTimeout/socketTimeout/重试相关）仍然保持默认，只改 maxWait 这一个变量。
+druid:
+  driverClassName: com.mysql.jdbc.Driver
+  url: jdbc:mysql://mysql-lab:3306/employees?useSSL=false&serverTimezone=UTC
+  username: root
+  password: root
+  maxWait: 60000
+
+server:
+  port: 8080
+  # 同样不覆盖 tomcat 的任何默认值（connection-timeout / max-threads / accept-count 全部留空）
+
+logging:
+  level:
+    com.alibaba.druid: DEBUG
+    com.repro: DEBUG

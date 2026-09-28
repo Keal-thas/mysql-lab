@@ -1,5 +1,6 @@
 .idea/
 .DS_Store
+case-studies/*/target/
 docs-starlight/node_modules/
 docs-starlight/.astro/
 docs-starlight/dist/
