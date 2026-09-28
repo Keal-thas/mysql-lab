@@ -264,6 +264,39 @@ DB 故障
 这也是为什么生产上一次"DB OOM 秒级抖动"经常被放大成"整个 Java 服务不可用几分钟甚至更久"——
 罪魁祸首往往不是 DB 故障本身的时长，而是 **Druid 默认无限等待 + Tomcat 线程不会被打断** 这两个默认值叠加的结果。
 
+## 结论 4：DB 恢复之后，thread 数 / direct buffer 数为什么不降？
+
+生产上一个常见的困惑：DB 故障期间 open fd、线程数、direct buffer memory 都涨了，DB 恢复、fd 也降回去了，
+但**线程数和 direct buffer 就是不降**。加了 `JvmDiagController`（读 `ThreadMXBean` + `BufferPoolMXBean`）之后
+实测复现了这个现象，并且找到了真正的原因——**不是泄漏**。
+
+### 复现步骤
+
+1. 把 app 指向一个一次性的、用 `mysql_native_password` 的临时 MySQL 容器（`repro-mysql-temp`），先确认正常能查
+2. `docker stop repro-mysql-temp` 模拟 DB 故障，发 6 个会卡住的 `/query`（线程池缩小到 `maxThreads=8` 方便观察）：
+   `threadCount` 15→22，`direct buffer count` 1→8，`memoryUsed` 8192→65536——**线程数和 direct buffer 数几乎 1:1 同步往上涨**
+3. `docker start repro-mysql-temp` 模拟 DB 恢复，隔几秒探测一次 `/jvm`：40 秒后降了一点（22→20，8→6，说明确实有 2 个请求物理上恢复了），
+   之后连续 **190 秒**（t+40s 到 t+230s）纹丝不动
+4. 这时候抓 `jstack`：卡在原地的那几个 `http-nio-8080-exec-*` 线程，栈顶全部是 `TaskQueue.poll()` / `ThreadPoolExecutor.getTask()`——
+   **根本没卡在数据库代码里，是空闲状态**，说明它们其实已经恢复了，只是没被回收
+5. **关键实验**：把所有探测请求也停掉，纯空等 90 秒，再看一次：`threadCount` 20→16，`direct buffer count` 6→2，**直接掉回基线**
+
+### 原因
+
+JDK `ThreadPoolExecutor` 回收超过 `corePoolSize`（对应 Tomcat 的 `minSpareThreads`）的空闲线程，靠的是
+`workQueue.poll(keepAliveTime, unit)` 连续超时（默认 `keepAliveTime=60s`）。**我自己每隔 8~10 秒探测一次 `/jvm`
+接口**，这个探测请求会被随机分配给某一个正在等待的空闲线程去处理——相当于不断把"抽中"的那个线程的空闲计时器清零。
+只要外部还有比 60 秒更密的请求（哪怕只是健康检查、监控探针这种极低频流量），线程池里就总有线程轮流被"续命"，
+永远攒不够一次完整的 60 秒空闲窗口，自然也就一直不会被回收——**看起来像卡住不降，其实是被背景流量喂着**。
+
+而 direct buffer 数不降是同一个原因的直接后果：JDK NIO 的 `sun.nio.ch.Util.getTemporaryDirectBuffer()` 用
+`ThreadLocal` 缓存每个线程自己的 direct buffer，线程不消失，这个缓存就不释放——线程数不降，direct buffer 数就跟着不降。
+
+### 怎么在生产上验证是不是这个原因
+
+- 找流量最低谷的时段看这两个指标会不会降一截；或者直接把这台机器从负载均衡摘掉、暂停健康检查，纯断流 2 分钟以上看指标是否应声下降——降了就是这个原因，跟 DB 有没有真的恢复其实已经没关系了
+- 不降的话，再去查是不是真的还有线程卡在 DB/IO 调用里（jstack 看栈顶），那才是真泄漏
+
 ## 怎么验证你线上到底是哪种情况
 
 1. 线上报警时抓一次 `jstack`（或 `kill -3` 打到 GC 日志/stdout），搜 `takeLast` 还是 `awaitNanos`：
