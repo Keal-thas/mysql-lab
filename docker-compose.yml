@@ -63,5 +63,35 @@ services:
     ports:
       - "127.0.0.1:13383:4321"
 
+  # --- Oracle->PostgreSQL PoC（临时，重资源，用 profile 隔离，不随 `docker compose up` 默认启动）---
+  # 起法：docker compose --profile oracle-poc up -d
+  # 关法：docker compose --profile oracle-poc down -v
+  oracle:
+    image: gvenzl/oracle-free:23-slim
+    container_name: mysql-lab-oracle-poc
+    profiles: ["oracle-poc"]
+    environment:
+      ORACLE_PASSWORD: "oracle"
+      APP_USER: "demo"
+      APP_USER_PASSWORD: "demo"
+    ports:
+      - "127.0.0.1:13521:1521"
+    volumes:
+      - oracle-poc-data:/opt/oracle/oradata
+
+  pg-poc:
+    image: postgres:16
+    container_name: mysql-lab-pg-poc
+    profiles: ["oracle-poc"]
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "demo"
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - pg-poc-data:/var/lib/postgresql/data
+
 volumes:
   mysql-lab-data:
+  oracle-poc-data:
+  pg-poc-data:
