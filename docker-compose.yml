@@ -64,11 +64,17 @@ services:
       - "127.0.0.1:13383:4321"
 
   # --- Oracle->PostgreSQL PoC（临时，重资源，用 profile 隔离，不随 `docker compose up` 默认启动）---
+  # 这台 Docker daemon 被多个 agent/worktree 共用，container_name 是 daemon 全局唯一的，
+  # 不能硬编码（不同 worktree 跑同名服务会互相冲突/报错）。故意不设 container_name，
+  # 交给 compose 用项目前缀（默认取自目录名）自动生成，不同 worktree 天然不会撞名。
+  #
   # 起法：docker compose --profile oracle-poc up -d
-  # 关法：docker compose --profile oracle-poc down -v
+  # 看端口映射：docker compose --profile oracle-poc port oracle 1521 / port pg-poc 5432
+  # 关法：只关这两个服务，不要对整个文件跑 down（会牵动没有 profile 的其它服务）：
+  #   docker compose --profile oracle-poc rm -sf oracle pg-poc
+  #   docker volume rm $(docker volume ls -q | grep -E '(oracle|pg)-poc-data')
   oracle:
     image: gvenzl/oracle-free:23-slim
-    container_name: mysql-lab-oracle-poc
     profiles: ["oracle-poc"]
     environment:
       ORACLE_PASSWORD: "oracle"
@@ -81,7 +87,6 @@ services:
 
   pg-poc:
     image: postgres:16
-    container_name: mysql-lab-pg-poc
     profiles: ["oracle-poc"]
     environment:
       POSTGRES_PASSWORD: "postgres"
