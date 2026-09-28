@@ -182,7 +182,7 @@ waitThreadCount=21
 也就是说 Spring Boot 1.5.9 内嵌的 Tomcat 8.5.23，在完全不配置 `server.tomcat.*` 的情况下：
 
 - `maxThreads`：**200**（最大工作线程数，也就是最多能有 200 个请求同时被业务代码处理）
-- `acceptCount`：**100**（线程全占满之后，Tomcat 的 `ServerSocket` backlog 还能再排队 100 个连接）
+- `acceptCount`：**100**（这只是内核 `listen()` backlog 大小，管的是"握手完成到 Tomcat 调用 `accept()`"这一瞬间的缓冲，不是线程排队队列——见下面"机制验证"里纠正过的结论）
 - `minSpareThreads`：10
 - `connectionTimeout`：**60000ms**（60s）—— 这个超时管的是"连接建立后、读到完整请求头/请求体的时间"，**不是**请求处理（Servlet 执行）的超时
 - `maxConnections`：**10000**——这是 NIO Poller 能同时"握着"的 socket 数上限（远大于 maxThreads），意味着 Tomcat 可以接受远多于 200 个连接，但同一时刻只有 200 个能真正被派发到工作线程去跑业务代码，其余的连接是建立了但排着队、没人处理
@@ -207,12 +207,48 @@ waitThreadCount=21
 容器也不会为超出 `maxThreads` 的请求额外开线程——多出来的 6 个请求全部还在排队，一个都没有被真正执行。
 这就是"默认 200 个线程一旦被 DB 故障全部占满，第 201 个请求开始就再也没有线程处理"的直接证据。
 
-> 说明：受限于本机 Docker Desktop 在 macOS 上的端口转发实现（有一层额外的代理/NAT），没能在这台机器上干净地
-> 复现"超过 `maxThreads+acceptCount` 之后连接被内核直接拒绝(RST)"这最后一步——10 个客户端全部是自己
-> `--max-time` 超时退出，没观察到 `connection refused`。但核心机制（工作线程数被硬性封顶在 `maxThreads`，
-> 不会随请求数弹性增长）已经用线程栈实锤验证过了；生产环境（物理机/云主机，没有这层 Docker Desktop 代理）
-> 到了 `maxThreads+acceptCount` 之后会直接拒绝新连接，这一步是 Tomcat/内核 TCP backlog 的标准行为，
-> 不依赖本地环境。
+最初以为"超过 `maxThreads+acceptCount`（本例是 4+2=6）就会被拒绝/RST"，加测之后发现这个理解是错的，
+下面是纠正后的结论。
+
+### 排队等线程的连接，会不会占用文件描述符（fd）？—— 会，而且比想象中撑得住更多
+
+同样 `maxThreads=4, acceptCount=2` 的配置下，这次直接发 **15 个**（远超"4+2=6"的假想上限）会挂住的请求，
+对比发请求前后容器的 fd 数：
+
+```
+baseline fd count: 28
+15 个并发请求 3 秒后: 43        # 整整多了 15 个，一个都没被拒绝
+```
+
+`ls -la /proc/1/fd` 能看到新增的都是 `socket:[...]`，说明这 15 个连接全部被 Tomcat 的 Acceptor 线程
+`accept()` 了，每个都拿到了一个真实的 fd；而线程栈里 `http-nio-8080-exec-*` 依然只有 4 个——**连接被接受
+和请求被执行是两件事，前者由 `maxConnections` 控制，后者才由 `maxThreads` 控制**。
+
+这就纠正了前面"超过 acceptCount 就会拒绝"的说法。真实的分层是：
+
+| 层级 | 谁控制 | 默认值 | 占不占 fd |
+|---|---|---|---|
+| 内核 SYN 队列（三次握手还没走完） | OS `listen()` backlog，即 Tomcat 的 `acceptCount` | 100 | 不占（内核态，还没 `accept()`） |
+| 已 `accept()`、在 Poller 里排队等 worker 线程 | `maxConnections` | **10000** | **占**（一个 socket fd） |
+| 真正在跑业务代码 | `maxThreads` | 200 | 占（还额外占一份线程栈内存） |
+
+`acceptCount` 只是"握手完成到 Tomcat 应用层调用 `accept()`"这极短暂过程的内核缓冲区，Tomcat 的 Acceptor
+是独立于 `maxThreads` 的一个线程，会一直 `accept()` 到 `maxConnections`（默认 **10000**）才停。也就是说
+**线上 DB 故障时，真正会把新连接直接拒掉的边界是 `maxConnections=10000`，不是 `maxThreads+acceptCount`**——
+在到 10000 之前，新连接都能连上、都会占一个 fd，只是分不到线程干活，纯排队挂着。这也是本来想验证
+"超过 acceptCount 就会 connection refused" 却怎么都验证不出来的真正原因，不是本机 Docker 网络的锅。
+
+### 附带发现：不碰数据库的接口也会被一起拖死
+
+线程被打满期间，顺手测了一下完全不碰 `getConnection()` 的 `/pool` 接口：
+
+```
+curl --max-time 2 http://localhost:18080/pool   # 直接拿不到任何响应
+```
+
+因为 `/pool` 一样要占用一个 Tomcat 工作线程，而 4 个线程全被卡在 `/query` 的 `getConnection()` 里出不来，
+`/pool` 只能在队列里排着。**"全站假死"不是夸张的比喻**：同一个 Tomcat 线程池一旦被某个依赖坏掉的接口占满，
+这个进程里所有 HTTP 接口都会被拖死，跟接口本身碰不碰那个坏掉的 DB 完全无关。
 
 ### 所以级联失败的路径是这样的
 
@@ -220,10 +256,9 @@ waitThreadCount=21
 DB 故障
   → 每次 getConnection() 都在 500ms 重试的背景下无限等待（默认 maxWait=-1）
   → 每个落到这个接口上的 HTTP 请求都会占用一个 Tomcat worker 线程且永不释放
-  → 请求持续进来，200 个 maxThreads 很快用完
-  → 新请求进 acceptCount=100 的排队队列
-  → 队列也满了之后，新连接直接被拒绝 / RST（不是 503，是连不上）
-  → 整个应用对外表现为"全站假死"，即使只有一个接口依赖了那个挂掉的 DB
+  → 请求持续进来，200 个 maxThreads 很快用完，新连接照样能连上（占一个 fd），只是分不到线程干活，纯排队
+  → 不碰这个坏 DB 的其它接口，因为抢不到工作线程，也会被一起拖死（"全站假死"）
+  → 排队的连接数一路涨到 maxConnections=10000 之后，新连接才会被直接拒绝/RST
 ```
 
 这也是为什么生产上一次"DB OOM 秒级抖动"经常被放大成"整个 Java 服务不可用几分钟甚至更久"——
