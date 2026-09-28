@@ -170,15 +170,49 @@ waitThreadCount=21
 说明：**客户端断开连接，完全不会打断服务端正在 `getConnection()` 里 park 着的 Tomcat 工作线程**——
 这些线程会一直占着，直到 DB 恢复或进程重启。这是比 "单次请求超时" 更危险的次生问题：**线程泄漏**。
 
-### 默认值
+### 默认值（不是查文档，是从跑起来的 Connector 对象里读出来的实际值）
 
-- Tomcat 8.5 embedded（Spring Boot 1.5.9 不覆盖时）：
-  - `server.tomcat.max-threads`：**200**（最大工作线程数，也就是最多能有 200 个请求同时被业务代码处理）
-  - `acceptCount`（`server.tomcat.accept-count`）：**100**（线程全占满之后，OS/Tomcat 还能再排队 100 个连接，超过这个数才会被拒绝/RST）
-  - `minSpareThreads`：10
-  - `connectionTimeout`（`server.connection-timeout`）：**60000ms**（60s）—— 但这个超时管的是"连接建立后、读到完整请求头/请求体的时间"，**不是**请求处理（Servlet 执行）的超时
+加了一个 `TomcatConnectorLogger`，在内嵌 Tomcat 启动后直接读 `AbstractHttp11Protocol` 的字段打印出来，
+启动日志里能看到：
+
+```
+### TOMCAT CONNECTOR DEFAULTS ### maxThreads=200, minSpareThreads=10, acceptCount=100, connectionTimeout=60000, maxConnections=10000
+```
+
+也就是说 Spring Boot 1.5.9 内嵌的 Tomcat 8.5.23，在完全不配置 `server.tomcat.*` 的情况下：
+
+- `maxThreads`：**200**（最大工作线程数，也就是最多能有 200 个请求同时被业务代码处理）
+- `acceptCount`：**100**（线程全占满之后，Tomcat 的 `ServerSocket` backlog 还能再排队 100 个连接）
+- `minSpareThreads`：10
+- `connectionTimeout`：**60000ms**（60s）—— 这个超时管的是"连接建立后、读到完整请求头/请求体的时间"，**不是**请求处理（Servlet 执行）的超时
+- `maxConnections`：**10000**——这是 NIO Poller 能同时"握着"的 socket 数上限（远大于 maxThreads），意味着 Tomcat 可以接受远多于 200 个连接，但同一时刻只有 200 个能真正被派发到工作线程去跑业务代码，其余的连接是建立了但排着队、没人处理
 - Tomcat（乃至整个 Servlet 容器规范）**默认没有"处理超时"这个概念**：一旦请求进了某个 worker 线程，
   这个线程可以永远执行下去，容器不会主动打断它。
+
+### 机制验证：worker 线程数是不是真的被卡死在 maxThreads
+
+200 个线程量级不方便在本地一次性打满做实验，所以用环境变量把
+`SERVER_TOMCAT_MAX_THREADS=4`、`SERVER_TOMCAT_ACCEPT_COUNT=2`（机制等价，只是数字调小方便复现）跑了一遍：
+启动日志确认生效（`maxThreads=4, acceptCount=2`），然后同时发 10 个会挂住的 `/query` 请求（`maxWait` 临时调到
+10 分钟避免测试过程中自己超时跑完），3 秒后抓线程栈：
+
+```
+"http-nio-8080-exec-4" ... waiting on condition
+"http-nio-8080-exec-3" ... waiting on condition
+"http-nio-8080-exec-2" ... waiting on condition
+"http-nio-8080-exec-1" ... waiting on condition
+```
+
+**只有 4 个 `http-nio-8080-exec-*` 线程存在**，跟配置的 `maxThreads=4` 精确对应，即使同时来了 10 个请求，
+容器也不会为超出 `maxThreads` 的请求额外开线程——多出来的 6 个请求全部还在排队，一个都没有被真正执行。
+这就是"默认 200 个线程一旦被 DB 故障全部占满，第 201 个请求开始就再也没有线程处理"的直接证据。
+
+> 说明：受限于本机 Docker Desktop 在 macOS 上的端口转发实现（有一层额外的代理/NAT），没能在这台机器上干净地
+> 复现"超过 `maxThreads+acceptCount` 之后连接被内核直接拒绝(RST)"这最后一步——10 个客户端全部是自己
+> `--max-time` 超时退出，没观察到 `connection refused`。但核心机制（工作线程数被硬性封顶在 `maxThreads`，
+> 不会随请求数弹性增长）已经用线程栈实锤验证过了；生产环境（物理机/云主机，没有这层 Docker Desktop 代理）
+> 到了 `maxThreads+acceptCount` 之后会直接拒绝新连接，这一步是 Tomcat/内核 TCP backlog 的标准行为，
+> 不依赖本地环境。
 
 ### 所以级联失败的路径是这样的
 
@@ -223,6 +257,18 @@ curl http://localhost:18080/query    # 这个会一直挂住，Ctrl+C 只会中�
 # 4. 抓线程栈证据
 docker exec druid-oom-app kill -3 1
 docker logs druid-oom-app | grep -A 20 'http-nio-8080-exec'
+
+# 5.（可选）验证 Tomcat worker 线程数确实被硬性封顶在 max-threads，
+#    用环境变量把默认的 200/100 缩小成 4/2，方便在本地几秒内打满：
+docker rm -f druid-oom-app
+docker run -d --name druid-oom-app --network mysql-lab_default -p 18080:8080 \
+  -e SERVER_TOMCAT_MAX_THREADS=4 -e SERVER_TOMCAT_ACCEPT_COUNT=2 \
+  -e SERVER_TOMCAT_MIN_SPARE_THREADS=1 -e DRUID_MAXWAIT=600000 \
+  -v "$PWD/target/app.jar":/app.jar eclipse-temurin:8-jre java -jar /app.jar
+for i in $(seq 1 10); do curl -s -o /dev/null http://localhost:18080/query & done
+sleep 3
+docker exec druid-oom-app kill -3 1
+docker logs druid-oom-app | grep -c 'http-nio-8080-exec.*"'   # 应该恒等于 max-threads 的值，不会更多
 ```
 
 清理：`docker rm -f druid-oom-app`（不影响 `mysql-lab` 本身任何容器，全程只读访问了它的网络）。
