@@ -7,3 +7,5 @@
 | 03 | [隐式类型转换让索引失效](03-implicit-type-conversion/) | 数字字面量比字符串列，为什么会让索引基本失效 |
 | 04 | [联合索引最左前缀原则](04-index-leftmost-prefix/) | 联合索引为什么只能"从左边开始连续用" |
 | 05 | [大 OFFSET 分页为什么越翻越慢](05-offset-pagination/) | OFFSET 分页的代价，以及游标分页怎么解决 |
+| 06 | [覆盖索引 / index-only scan](06-covering-index/) | Using index 和 Using index condition 的区别，什么时候能避免回表 |
+| 07 | [长数字/长字符串"看起来不一样、比出来却一样"](07-numeric-precision-pitfalls/) | FLOAT/DOUBLE 精度丢失、INT/VARCHAR 截断、VARCHAR 查询隐式转换——四种原因逐一复现 |
